@@ -46,16 +46,6 @@ class _UsuarioScreenState extends State<UsuarioScreen> {
                     },
                   ),
                   SizedBox(height: 20.0),
-                  CheckboxListTile(
-                    title: Text('Importante'),
-                    value: importante,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        importante = value!;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
