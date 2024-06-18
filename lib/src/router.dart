@@ -1,5 +1,6 @@
 import 'package:app/page/login.dart';
 import 'package:app/page/registro.dart';
+import 'package:app/page/usuarios.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return LoginScreen();
+        return UsuarioScreen();
       },
       routes: <RouteBase>[
         GoRoute(
@@ -20,7 +21,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: 'Usuario',
           builder: (BuildContext context, GoRouterState state) {
-            return const Scaffold();
+            return UsuarioScreen();
           },
         ),
         GoRoute(
