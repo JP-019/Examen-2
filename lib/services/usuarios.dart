@@ -11,15 +11,16 @@ class AuthService {
       String email, String password) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       User? user = result.user;
 
       // Crear documento del usuario en Firestore
       await usuarios.doc(user!.uid).set({
         'email': email,
-
         'createdAt': Timestamp.now(),
-        // Agrega aquí otros campos que quieras guardar
+        'password': password,
       });
 
       return user;
@@ -33,7 +34,7 @@ class AuthService {
           throw 'La contraseña es demasiado débil.';
         }
       }
-      print(e.toString());
+      print('Error en registro: ${e.toString()}');
       return null;
     }
   }
@@ -43,7 +44,9 @@ class AuthService {
       String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       User? user = result.user;
       return user;
     } catch (e) {
@@ -56,7 +59,7 @@ class AuthService {
           throw 'El correo electrónico no es válido.';
         }
       }
-      print(e.toString());
+      print('Error en inicio de sesión: ${e.toString()}');
       return null;
     }
   }
@@ -66,7 +69,8 @@ class AuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      print(e.toString());
+      print(
+          'Error al enviar email de restablecimiento de contraseña: ${e.toString()}');
     }
   }
 
@@ -75,7 +79,7 @@ class AuthService {
     try {
       return await _auth.signOut();
     } catch (e) {
-      print(e.toString());
+      print('Error al cerrar sesión: ${e.toString()}');
     }
   }
 }

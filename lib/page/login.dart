@@ -1,5 +1,9 @@
+import 'package:app/page/usuarios.dart';
 import 'package:flutter/material.dart';
 import 'package:app/page/registro.dart';
+import 'package:app/services/usuarios.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:app/services/usuarios.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,7 +17,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String email = '';
   String password = '';
   String error = '';
-  bool isLoading = false; // Estado para controlar la carga
 
   @override
   Widget build(BuildContext context) {
@@ -46,31 +49,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               SizedBox(height: 20.0),
-              isLoading // Mostrar un indicador de carga si isLoading es true
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() =>
-                              isLoading = true); // Activar el estado de carga
-                          try {
-                            dynamic result = await _auth
-                                .signInWithEmailAndPassword(email, password);
-                            if (result == null) {
-                              setState(() => error =
-                                  'Error al iniciar sesión. Verifica tus credenciales.');
-                              setState(() => isLoading =
-                                  false); // Desactivar el estado de carga
-                            }
-                          } catch (e) {
-                            setState(() => error = e.toString());
-                            setState(() => isLoading =
-                                false); // Desactivar el estado de carga
-                          }
-                        }
-                      },
-                      child: Text('Iniciar sesión'),
-                    ),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    try {
+                      dynamic result = await _auth.signInWithEmailAndPassword(
+                          email, password);
+                      if (result == null) {
+                        setState(() => error =
+                            'Error al iniciar sesión. Verifica tus credenciales.');
+                      } else {
+                        Navigator.pushReplacement(
+                          // Reemplaza la pantalla actual
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  UsuarioScreen()), // Lleva al UsuarioScreen
+                        );
+                      }
+                    } catch (e) {
+                      setState(() => error = e.toString());
+                    }
+                  }
+                },
+                child: Text('Iniciar sesión'),
+              ),
+              SizedBox(height: 12.0),
+              Text(
+                error,
+                style: TextStyle(color: Colors.red, fontSize: 14.0),
+              ),
               SizedBox(height: 12.0),
               Text(
                 error,
@@ -84,12 +92,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 },
                 child: Text('¿No tienes cuenta? Regístrate aquí'),
-              ),
-              TextButton(
-                onPressed: () {
-                  _auth.resetPassword(email); // Restablecer contraseña
-                },
-                child: Text('¿Olvidaste tu contraseña?'),
               ),
             ],
           ),
