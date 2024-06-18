@@ -1,10 +1,7 @@
-import 'package:app/page/usuarios.dart';
 import 'package:flutter/material.dart';
+import 'package:app/services/usuarios.dart';
 import 'package:app/page/registro.dart';
-import 'package:app/services/usuarios.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:app/services/usuarios.dart';
+import 'package:app/page/usuarios.dart'; // Asegúrate de que UsuarioScreen esté importado
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -53,19 +50,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     try {
+                      // Intenta iniciar sesión
                       dynamic result = await _auth.signInWithEmailAndPassword(
                           email, password);
-                      if (result == null) {
-                        setState(() => error =
-                            'Error al iniciar sesión. Verifica tus credenciales.');
-                      } else {
+                      if (result != null) {
+                        // Inicio de sesión exitoso, navega a UsuarioScreen
                         Navigator.pushReplacement(
-                          // Reemplaza la pantalla actual
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  UsuarioScreen()), // Lleva al UsuarioScreen
+                              builder: (context) => UsuarioScreen()),
                         );
+                      } else {
+                        setState(() => error =
+                            'Error al iniciar sesión. Verifica tus credenciales.');
                       }
                     } catch (e) {
                       setState(() => error = e.toString());
@@ -80,10 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(color: Colors.red, fontSize: 14.0),
               ),
               SizedBox(height: 12.0),
-              Text(
-                error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0),
-              ),
               TextButton(
                 onPressed: () {
                   Navigator.push(
