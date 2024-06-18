@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:app/page/registro.dart'; // Importa la pantalla de registro
+import 'package:app/page/registro.dart';
 import 'package:app/services/usuarios.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -75,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  // Implementa la funcionalidad de restablecimiento de contraseña aquí
+                  _auth.resetPassword(email); // Restablecer contraseña
                 },
                 child: Text('¿Olvidaste tu contraseña?'),
               ),

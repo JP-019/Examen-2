@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final CollectionReference userCollection =
-      FirebaseFirestore.instance.collection('usuarios');
+  final CollectionReference usuarios =
+      FirebaseFirestore.instance.collection('usuario');
 
   // Registro con correo y contraseña
   Future<User?> registerWithEmailAndPassword(
@@ -14,14 +14,25 @@ class AuthService {
           email: email, password: password);
       User? user = result.user;
 
-      // Añadir usuario a Firestore
-      await userCollection.doc(user!.uid).set({
+      // Crear documento del usuario en Firestore
+      await usuarios.doc(user!.uid).set({
         'email': email,
+
         'createdAt': Timestamp.now(),
+        // Agrega aquí otros campos que quieras guardar
       });
 
       return user;
     } catch (e) {
+      if (e is FirebaseAuthException) {
+        if (e.code == 'email-already-in-use') {
+          throw 'El correo electrónico ya está en uso. Por favor, usa otro correo.';
+        } else if (e.code == 'invalid-email') {
+          throw 'El correo electrónico no es válido.';
+        } else if (e.code == 'weak-password') {
+          throw 'La contraseña es demasiado débil.';
+        }
+      }
       print(e.toString());
       return null;
     }
@@ -36,6 +47,15 @@ class AuthService {
       User? user = result.user;
       return user;
     } catch (e) {
+      if (e is FirebaseAuthException) {
+        if (e.code == 'user-not-found') {
+          throw 'No hay usuario con ese correo electrónico.';
+        } else if (e.code == 'wrong-password') {
+          throw 'Contraseña incorrecta.';
+        } else if (e.code == 'invalid-email') {
+          throw 'El correo electrónico no es válido.';
+        }
+      }
       print(e.toString());
       return null;
     }
@@ -56,16 +76,6 @@ class AuthService {
       return await _auth.signOut();
     } catch (e) {
       print(e.toString());
-    }
-  }
-
-  // Obtener perfil de usuario
-  Future<DocumentSnapshot> getUserProfile(String uid) async {
-    try {
-      return await userCollection.doc(uid).get();
-    } catch (e) {
-      print(e.toString());
-      rethrow;
     }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:app/services/usuarios.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -18,27 +17,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro'),
+        title: Text('Registrar'),
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
           child: Column(
             children: <Widget>[
               TextFormField(
-                decoration: InputDecoration(hintText: 'Email'),
-                validator: (val) => val!.isEmpty ? 'Ingresa un email' : null,
+                decoration: InputDecoration(labelText: 'Email'),
+                validator: (val) => val!.isEmpty ||
+                        !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(val)
+                    ? 'Ingresa un email válido'
+                    : null,
                 onChanged: (val) {
                   setState(() => email = val);
                 },
               ),
               SizedBox(height: 20.0),
               TextFormField(
-                decoration: InputDecoration(hintText: 'Contraseña'),
+                decoration: InputDecoration(labelText: 'Contraseña'),
                 obscureText: true,
                 validator: (val) => val!.length < 6
-                    ? 'Ingresa una contraseña de 6+ caracteres'
+                    ? 'La contraseña debe tener al menos 6 caracteres'
                     : null,
                 onChanged: (val) {
                   setState(() => password = val);
@@ -46,28 +48,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               SizedBox(height: 20.0),
               ElevatedButton(
-                child: Text('Registrar'),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    dynamic result = await _auth.registerWithEmailAndPassword(
-                        email, password);
-                    if (result == null) {
-                      setState(
-                          () => error = 'Por favor ingresa un email válido');
+                    try {
+                      dynamic result = await _auth.registerWithEmailAndPassword(
+                          email, password);
+                      if (result == null) {
+                        setState(() =>
+                            error = 'Error al registrar. Verifica tus datos.');
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    } catch (e) {
+                      setState(() => error = e.toString());
                     }
                   }
                 },
+                child: Text('Registrar'),
               ),
               SizedBox(height: 12.0),
               Text(
                 error,
                 style: TextStyle(color: Colors.red, fontSize: 14.0),
-              ),
-              TextButton(
-                child: Text('¿Ya tienes cuenta? Inicia sesión aquí'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
               ),
             ],
           ),
