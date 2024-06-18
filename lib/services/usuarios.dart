@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  final CollectionReference recetas =
-      FirebaseFirestore.instance.collection('usuario');
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final CollectionReference userCollection =
+      FirebaseFirestore.instance.collection('usuarios');
 
   // Registro con correo y contraseña
   Future<User?> registerWithEmailAndPassword(
@@ -13,6 +13,13 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
+
+      // Añadir usuario a Firestore
+      await userCollection.doc(user!.uid).set({
+        'email': email,
+        'createdAt': Timestamp.now(),
+      });
+
       return user;
     } catch (e) {
       print(e.toString());
@@ -49,6 +56,16 @@ class AuthService {
       return await _auth.signOut();
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  // Obtener perfil de usuario
+  Future<DocumentSnapshot> getUserProfile(String uid) async {
+    try {
+      return await userCollection.doc(uid).get();
+    } catch (e) {
+      print(e.toString());
+      rethrow;
     }
   }
 }
