@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
+  final CollectionReference recetas =
+      FirebaseFirestore.instance.collection('usuario');
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Registro con correo y contraseña
