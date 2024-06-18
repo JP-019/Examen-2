@@ -47,27 +47,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               SizedBox(height: 20.0),
               ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    try {
-                      // Intenta iniciar sesión
-                      dynamic result = await _auth.signInWithEmailAndPassword(
-                          email, password);
-                      if (result != null) {
-                        // Inicio de sesión exitoso, navega a UsuarioScreen
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UsuarioScreen()),
-                        );
-                      } else {
-                        setState(() => error =
-                            'Error al iniciar sesión. Verifica tus credenciales.');
-                      }
-                    } catch (e) {
-                      setState(() => error = e.toString());
-                    }
-                  }
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => UsuarioScreen()),
+                  );
                 },
                 child: Text('Iniciar sesión'),
               ),
